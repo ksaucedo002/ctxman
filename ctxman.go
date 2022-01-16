@@ -104,6 +104,7 @@ func (c *ctxx) WithOmiter(o Omiter) Ctxx {
 
 // AddCustomPreloadFuns permite añadir funciones, las cuales se ejecutaran
 // antes de realizar el preload, ideal para configurar omits, selects o limits
+// keyMap: Nombre del campo que sera pre cargado
 func (c *ctxx) AddCustomPreloadFuns(fns MapFuncs) {
 	for key, f := range fns {
 		c.preloadfunctions[key] = f
