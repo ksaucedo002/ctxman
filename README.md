@@ -61,3 +61,10 @@ Ejemplo
         return &data, nil
     }
 ```
+Al consultar un url podremos pasar en los query params los campos:
+- `limit`: indica el numero de registros
+- `offset`: indica desde donde ser leera los registros, o desplazamiento
+- `omit`:  Los campos que se desean omitir en la consulta, estos deben de estar separados por comas y tal y como se definieron en la interfaz omiter, probablemente CamelCase
+
+exameple:
+    - GET: `http://localhost:9091/datos?Omit=Description,Address,Monto&offset=10&limit=10`
