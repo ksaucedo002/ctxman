@@ -9,7 +9,7 @@ import (
 
 const (
 	default_files = 10
-	max_fields    = 30
+	max_fields    = 100
 	err_message   = "query param `%s` no reconocido, por favor revise la documentación, o pruebe usar notación CamelCase"
 )
 
@@ -41,13 +41,11 @@ type Ctxx interface {
 	// FormatGORM prepara offset y limit segun parametors
 	FormatGORM(conn *gorm.DB, preloads ...string) *gorm.DB
 }
+
 type ctxx struct {
-	/// list of omits
-	omitfiels        []string
+	Params
 	fieldsForOmit    map[string]struct{}
 	fieldsForPreload map[string]struct{}
-	offset           int
-	limit            int
 	preloadfunctions MapFuncs
 }
 
@@ -75,9 +73,11 @@ func Newctxx(c QueryParamer) Ctxx {
 		omits = strings.Split(prms.Omit, ",")
 	}
 	return &ctxx{
-		omitfiels:        omits,
-		offset:           prms.OffSet,
-		limit:            prms.Limit,
+		Params: Params{
+			omitfiels: omits,
+			offset:    prms.OffSet,
+			limit:     prms.Limit,
+		},
 		fieldsForOmit:    make(map[string]struct{}),
 		fieldsForPreload: make(map[string]struct{}),
 		preloadfunctions: make(MapFuncs),
