@@ -20,11 +20,6 @@ type Omiter interface {
 type QueryParamer interface {
 	QueryParam(name string) string
 }
-type parms struct {
-	OffSet int    `query:"offset"`
-	Limit  int    `query:"limit"`
-	Omit   string `query:"omit"`
-}
 type Ctxx interface {
 	/**
 	  WithOmiter recibe como parametro la implementacion de:
@@ -51,39 +46,40 @@ type ctxx struct {
 
 // Newctxx prepara el contexto
 func Newctxx(c QueryParamer) Ctxx {
-	prms := parms{}
 	var err error
-	prms.Omit = c.QueryParam("omit")
-	prms.OffSet, err = strconv.Atoi(c.QueryParam("offset"))
+	omit := c.QueryParam("omit")
+	offset, err := strconv.Atoi(c.QueryParam("offset"))
 	if err != nil {
-		prms.OffSet = 0
+		offset = 0
 	}
-	prms.Limit, err = strconv.Atoi(c.QueryParam("limit"))
+	limit, err := strconv.Atoi(c.QueryParam("limit"))
 	if err != nil {
-		prms.Limit = default_files
+		limit = default_files
 	}
-	if prms.Limit == 0 {
-		prms.Limit = default_files
+	if limit == 0 {
+		limit = default_files
 	}
-	if prms.Limit > max_fields {
-		prms.Limit = max_fields
+	if limit > max_fields {
+		limit = max_fields
 	}
 	var omits []string
-	if prms.Omit != "" {
-		omits = strings.Split(prms.Omit, ",")
+	if omit != "" {
+		omits = strings.Split(omit, ",")
 	}
 	return &ctxx{
 		Params: Params{
 			omitfiels: omits,
-			offset:    prms.OffSet,
-			limit:     prms.Limit,
+			offset:    offset,
+			limit:     limit,
 		},
 		fieldsForOmit:    make(map[string]struct{}),
 		fieldsForPreload: make(map[string]struct{}),
 		preloadfunctions: make(MapFuncs),
 	}
 }
-
+func (c *ctxx) GetParams() Params {
+	return c.Params
+}
 func (c *ctxx) WithOmiter(o Omiter) Ctxx {
 	allowsOmits, allowPreloads := o.OmitFiels()
 	for _, alp := range allowPreloads {
