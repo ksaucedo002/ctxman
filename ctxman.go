@@ -29,6 +29,7 @@ type Ctxx interface {
 	  			OmitFiels() ([]string, []string)
 	  	}
 	*/
+	GetParams() Params
 	WithOmiter(o Omiter) Ctxx
 	AddCustomPreloadFuns(fns MapFuncs)
 	// SimpleGORM ideal para consultas de una fila, offset 0  y limit en 1
